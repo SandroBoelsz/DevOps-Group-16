@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: argo-workflow-events
+  namespace: argo
+spec:
+  resource:
+    data-replication-event-source:
+      namespace: argo
+      group: argoproj.io
+      version: v1alpha1
+      resource: workflows
+      eventTypes:
+        - ADD
+        - UPDATE
+      filter:
+        expr: |
+          body.spec.templates[?(
+            @.inputs.artifacts[?(
+              @.s3.endpoint == 'https://scruffy.lab.uvalight.net:9000' || 
+              @.s3.endpoint == 'https://scruffy.lab.uvalight.net:9001' ||
+              @.s3.endpoint == 'https://data-naavre.lifewatch.dev:443' || 
+              @.s3.endpoint == 'https://console.data-naavre.lifewatch.dev'
+            )]
+          )]

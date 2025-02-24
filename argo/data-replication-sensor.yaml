@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: data-replication-sensor
+  namespace: argo
+spec:
+  dependencies:
+    - name: workflow-dep
+      eventSourceName: argo-workflow-events
+      eventName: data-replication-event-source
+
+  triggers:
+    - template:
+        name: http-request-trigger
+        http:
+          url: "https://naavre.lifewatch.dev/workflow-data-replication/trigger"
+          method: "POST"
+          headers:
+            - name: "Content-Type"
+              value: "application/json"
+          payload:
+            - dest: workflowUrl
+              value: "https://your-argo-server.example.com/workflows/argo/{{workflow-dep.body.metadata.name}}"
+            - dest: minioUrl
+              value: "{workflow-dep.body.spec.templates[0].inputs.artifacts[0].s3.endpoint}}"
+            - dest: bucket
+              value: "{{workflow-dep.body.spec.templates[0].inputs.artifacts[0].s3.bucket}}"
+            - dest: filename
+              value: "{{workflow-dep.body.spec.templates[0].inputs.artifacts[0].s3.key}}"
+            - dest: status
+              value: "{{workflow-dep.body.status.phase}}"
+          timeout: "30s"

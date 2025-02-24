@@ -1,2 +1,5 @@
-def start_replication(source, destination):
-    return f"Data replication started from {source} to {destination}"
+def trigger_replication(workflow_url, minio_url, bucket, filename, status):
+    """
+    Trigger a new data replication process
+    """
+    return workflow_url + ", " + minio_url + ", " + bucket + ", " + filename + ", " + status
