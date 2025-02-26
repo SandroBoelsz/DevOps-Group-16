@@ -1,9 +1,10 @@
-name: Deploy to ECS
+name: Deploy to EKS
 
 on:
   push:
     branches:
       - main
+      - ci-cd-pipeline
 
 jobs:
   build-and-deploy:
