@@ -1,16 +1,14 @@
-apiVersion: apps/v1 
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: lifewatch-deployment
-  labels: 
+  labels:
     app: lifewatch-app
-
 spec:
-  replicas: 1 
+  replicas: 1
   selector:
     matchLabels:
       app: lifewatch-app
-
   template:
     metadata:
       labels:
@@ -21,7 +19,7 @@ spec:
         image: DOCKER_IMAGE
         imagePullPolicy: Always
         ports:
-        - containerPort: 8080
+        - containerPort: 5000
   strategy:
     type: RollingUpdate
     rollingUpdate:
