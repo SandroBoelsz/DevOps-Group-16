@@ -1,9 +1,16 @@
-name: Deploy to ECS
+name: Deploy to EKS
 
 on:
   push:
     branches:
       - main
+      - ci-cd-pipeline
+
+env:
+  AWS_DEFAULT_REGION: eu-central-1
+  AWS_REGION: eu-central-1
+  ECR_REPOSITORY: lifewatch
+  IMAGE_TAG: latest
 
 jobs:
   build-and-deploy:
@@ -18,25 +25,29 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
         aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
-        aws-region: eu-west-1
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push Docker image
+    - name: Build, tag, and push Docker image 
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: lifewatch
-        IMAGE_TAG: latest
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./workflow-data-replication-api
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-    - name: Update ECS service
+    - name: Update kube config
+      run: aws eks update-kubeconfig --name Group16EKSCluster --region ${{ env.AWS_REGION }}
+
+    - name: Deploy to EKS
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: devops
-        IMAGE_TAG: latest
+        IMAGE_TAG: ${{ steps.commit.outputs.short }}
       run: |
-        aws ecs update-service --cluster lifewatchCluster --service lifewatch --force-new-deployment
+        kubectl apply -f manifests/lifewatch-deployment.yaml
+        kubectl apply -f manifests/lifewatch-service.yaml
+
+
+
