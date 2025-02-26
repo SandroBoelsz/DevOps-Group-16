@@ -1,7 +1,7 @@
 FROM alpine:latest
 
 # Add Rclone to the container
-RUN apk add --no-cache curl \
+RUN apk add --no-cache curl bash \
     && curl https://rclone.org/install.sh | bash
 
 # Install Python, pip, and bash
