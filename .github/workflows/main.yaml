@@ -6,6 +6,11 @@ on:
       - main
       - ci-cd-pipeline
 
+env:
+  AWS_DEFAULT_REGION: eu-central-1
+  AWS_REGION: eu-central-1
+  ECR_REPOSITORY: lifewatch
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -19,31 +24,29 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
         aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
-        aws-region: eu-central-1
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push Docker image
+    - name: Build, tag, and push Docker image 
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: lifewatch
         IMAGE_TAG: latest
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./workflow-data-replication-api
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-
     - name: Update kube config
-      run: aws eks update-kubeconfig --name Group16EKSCluster --region eu-central-1
+      run: aws eks update-kubeconfig --name Group16EKSCluster --region ${{ env.AWS_REGION }}
 
     - name: Deploy to EKS
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}        
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ steps.commit.outputs.short }}
       run: |
-        sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" manifests/lifewatch-deployment.yaml && \
+        sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" manifests/lifewatch-deployment.yaml
         kubectl apply -f manifests/lifewatch-deployment.yaml
         kubectl apply -f manifests/lifewatch-service.yaml
 
