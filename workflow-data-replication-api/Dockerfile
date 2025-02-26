@@ -3,10 +3,6 @@ FROM alpine:latest
 # Install Python, pip, and bash
 RUN apk add --no-cache python3 py3-pip bash
 
-# Install Rclone
-RUN apk add --no-cache curl \
-    && curl https://rclone.org/install.sh | bash
-
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
