@@ -33,10 +33,3 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./workflow-data-replication-api
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-    - name: Update ECS service
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: devops
-        IMAGE_TAG: latest
-      run: |
-        aws ecs update-service --cluster lifewatchCluster --service lifewatch --force-new-deployment
