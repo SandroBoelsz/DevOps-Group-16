@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workflow-api
+  labels:
+    app: workflow-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workflow-api
+  template:
+    metadata:
+      labels:
+        app: workflow-api
+    spec:
+      containers:
+      - name: workflow-api
+        image: workflow-api
+        imagePullPolicy: Never  # Prevent Kubernetes from pulling from Docker Hub
+        env:
+        - name: FLASK_RUN_PORT
+          value: "5000"
+        ports:
+        - containerPort: 5000
