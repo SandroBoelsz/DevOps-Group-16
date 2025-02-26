@@ -35,3 +35,20 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
 
+    - name: Install kubectl
+      run: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+    - name: Update kubeconfig for EKS
+      run: |
+        aws eks update-kubeconfig --region eu-central-1 --name Group16EKSCluster
+
+    - name: Deploy to EKS
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: lifewatch
+        IMAGE_TAG: latest
+      run: |
+        kubectl set image deployment/lifewatch-deployment lifewatch-container=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
