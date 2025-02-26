@@ -1,5 +1,8 @@
 FROM alpine:latest
 
+# Add Rclone to the container
+RUN apk add rclone
+
 # Install Python, pip, and bash
 RUN apk add --no-cache python3 py3-pip bash
 
