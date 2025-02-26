@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: lifewatch-app
-        image: DOCKER_IMAGE
+        image: 940482412682.dkr.ecr.eu-central-1.amazonaws.com/lifewatch:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
