@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: lifewatch-deployment
   labels: 
-     app: lifewatch-app
+    app: lifewatch-app
 
 spec:
   replicas: 1 
