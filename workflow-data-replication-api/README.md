@@ -18,7 +18,6 @@ touch .env
 
 Fill the .env file with the following content:
 ```bash
-SUPPORTED_URLS= # Comma separated list of supported URLs
 UVA_MINIO_API= # URL of the UvA Minio API
 SPAIN_MINIO_API= # URL of the Spain Minio API
 

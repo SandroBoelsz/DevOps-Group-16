@@ -6,9 +6,6 @@ from dotenv import load_dotenv
 from rclone_python import rclone
 from rclone_python.remote_types import RemoteTypes
 
-load_dotenv()
-
-
 def setup_rclone():
     if (not rclone.is_installed() or not os.getenv("UVA_MINIO_API") or
             not os.getenv("SPAIN_MINIO_API") or not os.getenv("MINIO_ACCESS_KEY_ID") or not os.getenv("MINIO_ACCESS_KEY")):
@@ -16,9 +13,9 @@ def setup_rclone():
             "Rclone is not installed or environment variables are not set")
 
     logging.info("Setting up rclone remotes")
-    if not rclone.check_remote_existing("source-minio-s3"):
+    if not rclone.check_remote_existing("uva-minio-s3"):
         rclone.create_remote(
-            "source-minio-s3",
+            "uva-minio-s3",
             RemoteTypes.s3,
             provider="Minio",
             region=os.getenv("MINIO_REGION"),
@@ -27,9 +24,9 @@ def setup_rclone():
             endpoint=os.getenv("UVA_MINIO_API")
         )
 
-    if not rclone.check_remote_existing("target-minio-s3"):
+    if not rclone.check_remote_existing("spain-minio-s3"):
         rclone.create_remote(
-            "target-minio-s3",
+            "spain-minio-s3",
             RemoteTypes.s3,
             provider="Minio",
             region=os.getenv("MINIO_REGION"),
@@ -40,6 +37,8 @@ def setup_rclone():
 
 
 def init_app():
+    load_dotenv()
+
     try:
         setup_rclone()
     except Exception as e:
