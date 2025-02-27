@@ -23,16 +23,10 @@ class StartReplication(Resource):
         data = replication_ns.payload
         
         if (data["minioUrl"] == os.getenv("UVA_MINIO_API")):
-            #TODO find a way to get source path
-            source_path = self.build_rclone_path("spain-minio-s3", data["bucket"], data["filename"])
-            
+            source_path = self.build_rclone_path("spain-minio-s3", "devopsgoup16", data["filename"])
             target_path = self.build_rclone_path('uva-minio-s3', data["bucket"], data["filename"])
-        elif (data["minioUrl"] == os.getenv("SPAIN_MINIO_API")):
-            source_path = self.build_rclone_path("spain-minio-s3", data["bucket"], data["filename"])
-            #TODO add way to get target path
-    
         else:
-            return "MinIO URL is not supported", 400
+            return {"message": "Only UvA MinIO URL is supported"}, 400
 
         locate_file_result = locate_file(source_path, target_path)
         if locate_file_result["status"] == "error":
@@ -46,8 +40,7 @@ class StartReplication(Resource):
             if result["status"] == "error":
                 return {"message": result["message"]}, 500
         
-        return {"message": "Replication completed successfully"}, 200
-
+        return {"message": "File is succesfully replicated on Dutch S3 bucket"}, 200
 
     def build_rclone_path(self, minio_url, bucket, filename):
         """
