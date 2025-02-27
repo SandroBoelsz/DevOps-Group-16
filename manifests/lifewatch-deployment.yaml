@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lifewatch-deployment
+  labels:
+    app: lifewatch-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lifewatch-app
+  template:
+    metadata:
+      labels:
+        app: lifewatch-app
+    spec:
+      containers:
+      - name: lifewatch-app
+        image: 940482412682.dkr.ecr.eu-central-1.amazonaws.com/lifewatch:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
