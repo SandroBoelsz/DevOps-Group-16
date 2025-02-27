@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  workflow-api:
-    image: workflow-api
+  lifewatch:
+    image: lifewatch
     build: .
     ports:
       - "5001:5000"

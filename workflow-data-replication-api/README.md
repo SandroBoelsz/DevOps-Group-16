@@ -33,17 +33,18 @@ cd workflow-data-replication-api
 
 docker compose build 
 
+minikube image load lifewatch:latest
+
 docker compose up
 ```
 
-### Open a new tab to run a lokal kubernetes image
+### Open a new tab to run a lokal kubernetes image with helm
 
 ```bash
-minikube image load workflow-api
+cd workflow-data-replication-api
+helm package lifewatch
+helm install lifewatch ./lifewatch
 
-kubectl apply -f deployment.yaml
-
-kubectl apply -f service.yaml
-
-minikube service workflow-api-service --url
+# Get service URL
+minikube service lifewatch-service --url
 ```
