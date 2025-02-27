@@ -22,6 +22,7 @@ python3 run.py
 Open a browser and navigate to `http://localhost:5000`
 The Swagger UI is available at the API root URL.
 
+
 # Kubernetes, docker and helm
 First make sure minikube, docker and helm are installed on you system
 

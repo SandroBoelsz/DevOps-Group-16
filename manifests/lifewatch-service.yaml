@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lifewatch-service
+  labels:
+    app: lifewatch-app 
+spec:
+  selector:
+    app: lifewatch-app
+  ports:
+    - port: 5000
+      targetPort: 5000
+
+  type: LoadBalancer
+
+
