@@ -22,3 +22,29 @@ python3 run.py
 Open a browser and navigate to `http://localhost:5000`
 The Swagger UI is available at the API root URL.
 
+
+# Kubernetes, docker and helm
+First make sure minikube, docker and helm are installed on you system
+
+```bash
+minikube start --driver=docker
+
+cd workflow-data-replication-api
+
+docker compose build 
+
+minikube image load lifewatch:latest
+
+docker compose up
+```
+
+### Open a new tab to run a lokal kubernetes image with helm
+
+```bash
+cd workflow-data-replication-api
+helm package lifewatch
+helm install lifewatch ./lifewatch
+
+# Get service URL
+minikube service lifewatch-service --url
+```
