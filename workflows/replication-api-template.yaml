@@ -1,0 +1,86 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: replication-api-template
+  generateName: replication-api-template-
+  namespace: argo
+spec:
+  entrypoint: dynamic-s3
+  arguments:
+    parameters:
+      - name: endpoint
+        value: "https://scruffy.lab.uvalight.net:9000"
+      - name: bucket
+        value: naa-vre-user-data
+      - name: filename
+        value: "example.txt"
+      - name: accessKey
+        value: "DevOpsGroup16"
+      - name: secretKey
+        value: ""
+
+  templates:
+    - name: dynamic-s3
+      steps:
+        - - name: get-bucket-info
+            template: api-request
+            arguments:
+              parameters:
+                - name: bucket
+                  value: "{{workflow.parameters.bucket}}"
+                - name: filename
+                  value: "{{workflow.parameters.filename}}"
+        - - name: process-file
+            template: s3-download
+            arguments:
+              parameters:
+                - name: endpoint
+                  value: "{{workflow.parameters.endpoint}}"
+                - name: bucket
+                  value: "{{workflow.parameters.bucket}}"
+                - name: filename
+                  value: "{{workflow.parameters.filename}}"
+                - name: accessKey
+                  value: "{{workflow.parameters.accessKey}}"
+                - name: secretKey
+                  value: "{{workflow.parameters.secretKey}}"
+
+    - name: api-request
+      inputs:
+        parameters:
+          - name: bucket
+          - name: filename
+      http:
+        method: POST
+        url: "http://placeholder/workflow-data-replication/trigger"
+        headers:
+          - name: content-type
+            value: application/json
+        body: '{"bucket": "{{inputs.parameters.bucket}}", "filename": "{{inputs.parameters.filename}}"}'
+        successCondition: statusCode == 200
+
+    - name: s3-download
+      inputs:
+        parameters:
+          - name: endpoint
+          - name: bucket
+          - name: filename
+          - name: accessKey
+          - name: secretKey
+      artifacts:
+        - name: input-file
+          path: /tmp/data/{{inputs.parameters.filename}}
+          s3:
+            bucket: "{{inputs.parameters.bucket}}"
+            key: "{{inputs.parameters.filename}}"
+            endpoint: "{{inputs.parameters.endpoint}}"
+            accessKeySecret:
+              name: "{{inputs.parameters.accessKey}}"
+              key: accessKey
+            secretKeySecret:
+              name: "{{inputs.parameters.secretKey}}"
+              key: secretKey
+      image: alpine:latest
+      command: [sh, -c]
+      args:
+        - "echo Downloaded {{inputs.parameters.filename}} from S3 at /tmp/data/{{inputs.parameters.filename}}"
