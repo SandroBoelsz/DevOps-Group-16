@@ -51,6 +51,7 @@ docker compose up
 
 ```bash
 cd workflow-data-replication-api
+helm uninstall lifewatch
 helm package lifewatch
 helm install lifewatch ./lifewatch
 
@@ -59,7 +60,7 @@ kubectl port-forward service/lifewatch-service 5000:80
 ```
 
 ### Access the Swagger UI
-Open a browser and navigate to `http://localhost:5000`
+Open a browser and navigate to `http://localhost:5001`
 The Swagger UI is available at the API root URL.
 
 ### Reset minikube:
