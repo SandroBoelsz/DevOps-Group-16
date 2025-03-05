@@ -32,11 +32,6 @@ cd workflow-data-replication-api
 python3 run.py
 ```
 
-### Access the Swagger UI
-Open a browser and navigate to `http://localhost:5000`
-The Swagger UI is available at the API root URL.
-
-
 # Kubernetes, docker and helm
 First make sure minikube, docker and helm are installed on you system
 
@@ -60,5 +55,16 @@ helm package lifewatch
 helm install lifewatch ./lifewatch
 
 # Get service URL
-minikube service lifewatch-service --url
+kubectl port-forward service/lifewatch-service 5000:80
+```
+
+### Access the Swagger UI
+Open a browser and navigate to `http://localhost:5000`
+The Swagger UI is available at the API root URL.
+
+### Reset minikube:
+```bash
+minikube stop                       
+minikube delete
+minikube start --driver=docker
 ```
