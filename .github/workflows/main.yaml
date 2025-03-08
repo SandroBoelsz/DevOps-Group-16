@@ -7,7 +7,6 @@ on:
       - ci-cd-pipeline
 
 env:
-  AWS_DEFAULT_REGION: eu-central-1
   AWS_REGION: eu-central-1
   ECR_REPOSITORY: lifewatch
   IMAGE_TAG: latest
