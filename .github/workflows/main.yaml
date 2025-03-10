@@ -11,6 +11,7 @@ env:
   AWS_REGION: eu-central-1
   ECR_REPOSITORY: lifewatch
   IMAGE_TAG: latest
+  ARGO_WORKFLOWS_VERSION: v3.6.4
 
 jobs:
   build-and-deploy:
@@ -51,5 +52,6 @@ jobs:
 
     - name: Deploy Argo Workflows to EKS
       run: |
-        kubectl apply -f manifests/argo-workflows-helm-repo.yml
-        kubectl apply -f manifests/argo-workflows-namespace.yml
+        kubectl create namespace argo || true
+        kubectl apply -n argo -f "https://github.com/argoproj/argo-workflows/releases/download/${{ env.ARGO_WORKFLOWS_VERSION }}/quick-start-minimal.yaml"
+        kubectl expose deployment argo-server --type=LoadBalancer --name=argo-server-external -n argo
