@@ -10,4 +10,9 @@ services:
       FLASK_APP: run.py
       FLASK_RUN_HOST: 0.0.0.0
       FLASK_RUN_PORT: 5000
+      FLASK_ENV: development  # Enable Flask development mode
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/venv  # Prevents venv from being overwritten
+
     restart: always
