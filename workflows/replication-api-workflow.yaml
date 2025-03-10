@@ -1,0 +1,109 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: replication-api-template-
+  namespace: argo
+spec:
+  entrypoint: main-workflow
+  arguments:
+    parameters:
+      - name: minioUrl
+        value: "https://scruffy.lab.uvalight.net:9000"
+      - name: bucket
+        value: naa-vre-user-data
+      - name: filename
+        value: "s.boelsz@gmail.com/testen.txt"
+      - name: accessKey
+        value: "DevOpsGroup16"
+      - name: secretKey
+        value: ""
+  templates:
+    # Step 1: Call the data replication API
+    - name: call-workflow-data-replication-api
+      inputs:
+        parameters:
+          - name: minioUrl
+          - name: bucket
+          - name: filename
+      container:
+        image: curlimages/curl:latest
+        command: [sh, -c]
+        args:
+          - |
+            response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "https://3bc6-86-89-195-16.ngrok-free.app/workflow-data-replication/trigger" \
+              -H "Content-Type: application/json" \
+              -d '{
+                    "minioUrl": "{{inputs.parameters.minioUrl}}",
+                    "bucket": "{{inputs.parameters.bucket}}",
+                    "filename": "{{inputs.parameters.filename}}"
+                  }')
+
+            if [ "$response" -ne 200 ]; then
+              echo "Error: Received HTTP status code $response"
+              exit 1
+            else
+              echo "Success: Received HTTP status code $response"
+            fi
+    
+    #Step 2: Download the file from S3 after the replication API is called successfully
+    - name: s3-download
+      inputs:
+        parameters:
+          - name: minioUrl
+          - name: bucket
+          - name: filename
+          - name: accessKey
+          - name: secretKey
+      container:
+        image: minio/mc:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            export MINIO_URL={{inputs.parameters.minioUrl}}
+            export BUCKET={{inputs.parameters.bucket}}
+            export FILENAME={{inputs.parameters.filename}}
+            export ACCESS_KEY={{inputs.parameters.accessKey}}
+            export SECRET_KEY={{inputs.parameters.secretKey}}
+
+            mc alias set minioclient $MINIO_URL $ACCESS_KEY $SECRET_KEY
+
+            if mc cp minioclient/$BUCKET/$FILENAME /tmp/$FILENAME; then
+              echo "Download successful"
+              content=$(cat /tmp/{{inputs.parameters.filename}})
+              echo "$content"
+            else
+              echo "Download failed"
+              exit 1
+            fi
+      outputs:
+        parameters:
+          - name: file-content
+            valueFrom:
+              path: /tmp/{{inputs.parameters.filename}}
+
+    - name: main-workflow
+      steps:
+        - - name: call-data-replication-api
+            template: call-workflow-data-replication-api
+            arguments:
+              parameters:
+                - name: minioUrl
+                  value: "{{workflow.parameters.minioUrl}}"
+                - name: bucket
+                  value: "{{workflow.parameters.bucket}}"
+                - name: filename
+                  value: "{{workflow.parameters.filename}}"
+        - - name: download-s3-file
+            template: s3-download
+            arguments:
+              parameters:
+                - name: minioUrl
+                  value: "{{workflow.parameters.minioUrl}}"
+                - name: bucket
+                  value: "{{workflow.parameters.bucket}}"
+                - name: filename
+                  value: "{{workflow.parameters.filename}}"
+                - name: accessKey
+                  value: "{{workflow.parameters.accessKey}}"
+                - name: secretKey
+                  value: "{{workflow.parameters.secretKey}}"

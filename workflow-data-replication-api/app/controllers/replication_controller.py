@@ -4,7 +4,6 @@ from app.services.locator_service import locate_file
 from app.services.replication_service import trigger_replication
 from app.models.replication_model import get_replication_model
 
-
 replication_ns = Namespace(
     "workflow-data-replication", description="Endpoints for workflow replication")
 replication_model = get_replication_model(replication_ns)
@@ -36,10 +35,11 @@ class StartReplication(Resource):
             return {"message": locate_file_result["message"]}, 200
         
         if locate_file_result["startReplication"]:
+            target_path = os.path.dirname(target_path)
             result = trigger_replication(source_path, target_path)
             if result["status"] == "error":
                 return {"message": result["message"]}, 500
-        
+
         return {"message": "File is succesfully replicated on Dutch S3 bucket"}, 200
 
     def build_rclone_path(self, minio_url, bucket, filename):
