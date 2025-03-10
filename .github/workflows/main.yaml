@@ -51,5 +51,5 @@ jobs:
 
     - name: Deploy Argo Workflows to EKS
       run: |
-        kubectl apply -f manifests/argo-workflows-helm-repo.yaml
+        kubectl apply -f manifests/argo-workflows-helm-repo.yml
         kubectl apply -f manifests/argo-workflows-namespace.yml
