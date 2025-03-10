@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - ci-cd-pipeline
+      - feature/US-21/workflow-trigger
 
 env:
   AWS_REGION: eu-central-1
@@ -48,5 +49,7 @@ jobs:
         kubectl apply -f manifests/lifewatch-deployment.yaml
         kubectl apply -f manifests/lifewatch-service.yaml
 
-
-
+    - name: Deploy Argo Workflows to EKS
+      run: |
+        kubectl apply -f manifests/argo-helm-repo.yml
+        kubectl apply -f manifests/argo-workflows-namespace.yml
