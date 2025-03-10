@@ -4,7 +4,6 @@ from app.services.locator_service import locate_file
 from app.services.replication_service import trigger_replication
 from app.models.replication_model import get_replication_model
 
-
 replication_ns = Namespace(
     "workflow-data-replication", description="Endpoints for workflow replication")
 replication_model = get_replication_model(replication_ns)
