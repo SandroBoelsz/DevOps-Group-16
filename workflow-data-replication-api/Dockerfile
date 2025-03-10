@@ -28,5 +28,12 @@ EXPOSE 5000
 ENV FLASK_APP=run.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
+# Set environment variables for Rclone
+ENV UVA_MINIO_API=test
+ENV SPAIN_MINIO_API=test
+ENV MINIO_ACCESS_KEY_ID=test
+ENV MINIO_ACCESS_KEY=test
+ENV MINIO_REGION=test
+
 # Run the application with Gunicorn
 CMD ["/usr/src/app/venv/bin/python", "-m", "gunicorn", "--reload", "--bind", "0.0.0.0:5000", "run:app"]
