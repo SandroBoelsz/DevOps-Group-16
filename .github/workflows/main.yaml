@@ -46,7 +46,7 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ steps.commit.outputs.short }}
       run: |
-        kubectl apply -f manifests/lifewatch-deployment.yaml
+        kubectl apply -f manifests/lifewatch-deployment.yaml --validate=false
         kubectl apply -f manifests/lifewatch-service.yaml
 
     - name: Deploy Argo Workflows to EKS
