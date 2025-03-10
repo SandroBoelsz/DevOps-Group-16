@@ -27,29 +27,29 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
         aws-region: ${{ env.AWS_REGION }}
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+    # - name: Login to Amazon ECR
+    #   id: login-ecr
+    #   uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push Docker image 
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./workflow-data-replication-api
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    # - name: Build, tag, and push Docker image 
+    #   env:
+    #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #   run: |
+    #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./workflow-data-replication-api
+    #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
     - name: Update kube config
       run: aws eks update-kubeconfig --name lifewatch-cluster --region ${{ env.AWS_REGION }}
 
-    - name: Deploy to EKS
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ steps.commit.outputs.short }}
-      run: |
-        kubectl apply -f manifests/lifewatch-deployment.yaml --validate=false
-        kubectl apply -f manifests/lifewatch-service.yaml
+    # - name: Deploy to EKS
+    #   env:
+    #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #     IMAGE_TAG: ${{ steps.commit.outputs.short }}
+    #   run: |
+    #     kubectl apply -f manifests/lifewatch-deployment.yaml
+    #     kubectl apply -f manifests/lifewatch-service.yaml
 
     - name: Deploy Argo Workflows to EKS
       run: |
-        kubectl apply -f manifests/argo-helm-repo.yml
+        kubectl apply -f manifests/argo-workflows-helm-repo.yaml
         kubectl apply -f manifests/argo-workflows-namespace.yml
