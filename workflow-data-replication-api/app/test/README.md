@@ -5,12 +5,17 @@
 source venv/bin/activate
 cd workflow-data-replication-api
 pip install -r requirements.txt
-python3 run.py
+
 ```
 
 ### Install Pytest
 ```bash
 pip install requests pytest
+```
+
+### Run Python API before testing!
+```bash
+python3 run.py
 ```
 
 ### Run tests
