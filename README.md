@@ -19,9 +19,13 @@ This section outlines the Continuous Integration and Continuous Deployment (CI/C
 
 1. **AWS Credentials**: 
    - Store `AWS_ACCESS_KEY` and `AWS_ACCESS_KEY_SECRET` as GitHub Secrets in your repository.
-2. **ECR Repository**: An ECR repository named `lifewatch` must exist in your AWS account.
-3. **EKS Cluster**: A cluster named `Group16EKSCluster` must be set up in the `eu-central-1` region.
-4. **Kubernetes Manifests**: The `manifests/` directory should contain `lifewatch-deployment.yaml` and `lifewatch-service.yaml`.
+2. **API Secrets**: 
+   - Store `MINIO_ACCESS_KEY_ID`, and `MINIO_ACCESS_KEY` as GitHub Secrets in your repository.
+3. **API Variables**:
+   - Store `UVA_MINIO_API`, `SPAIN_MINIO_API`, `MINIO_REGION` as environment variables in the Github repository.
+3. **ECR Repository**: An ECR repository named `lifewatch` must exist in your AWS account.
+4. **EKS Cluster**: A cluster named `Group16EKSCluster` must be set up in the `eu-central-1` region.
+5. **Kubernetes Manifests**: The `manifests/` directory should contain `lifewatch-deployment.yaml` and `lifewatch-service.yaml`.
 
 ## Pipeline Steps
 
@@ -65,4 +69,13 @@ The pipeline is triggered on a `push` event to the `main` or `ci-cd-pipeline` br
 - Access for Kubernetes requires IAM access entry on own `IAM user` and Access policy `AmazonEKSAdminPolicy`
 - The loadbalancer and security group are automatically configured by the EKS service.
 - In this case the loadbalancer is named `afd188729fa134b52937207f9fda48b5` and security group is `lifewatch-sg`.
-  
+
+## Argo Workflows
+Argo workflows is a container-native workflow engine for orchestrating parallel jobs on Kubernetes. In this project, it is automatically setup during the CI/CD pipeline on AWS, and can be accessed via the pod's LoadBalancer IP address. It is not available for local development.
+
+This loadbalancer IP address can be found by running the following command in the AWS kubernetes cluster:
+```bash
+kubectl get svc -n argo
+```
+A demo workflow is setup to simulate the data replication process between two Minio servers. and can be found in the `workflow-data-replication-api/argo-workflow.yaml` file.
+This workflow simulates the entire process by requesting a file from the UvA Minio server and download its content as output. If the file is not found, it will call this API and request the file from the Spain Minio server and replicate it to the UvA Minio server.
