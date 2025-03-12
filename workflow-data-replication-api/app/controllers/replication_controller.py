@@ -40,10 +40,14 @@ class StartReplication(Resource):
         file_size = get_file_size(data["bucket"], data["filename"])
         if file_size is None:
             return {"message": "File not found in Spain MinIO"}, 400
+        else:
+            print(f"File size: {file_size} bytes")
         
         removed_file = lru_manager.remove_oldest_file(file_size)
         if removed_file:
             print(f"Removed LRU file: {removed_file} to make space.")
+        else:
+            print("No LRU file removed.")
             
         if locate_file_result["startReplication"]:
             target_path = os.path.dirname(target_path)

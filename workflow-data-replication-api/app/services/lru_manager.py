@@ -20,7 +20,7 @@ class LRUManager:
         
 		# Change to get data from all buckets
         try:
-            response = self.minio_client.list_objects_v2(Bucket="devopsgroup16")
+            response = self.minio_client.list_objects_v2(Bucket="devopsgoup16")
             if "Contents" not in response:
                 return None, None
 
@@ -52,5 +52,4 @@ class LRUManager:
         #     except Exception as e:
         #         print(f"Error deleting file: {e}")
 
-        return None
-
+        return filename
