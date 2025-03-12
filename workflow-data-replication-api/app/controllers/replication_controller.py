@@ -1,12 +1,15 @@
 import os
 from flask_restx import Namespace, Resource
 from app.services.locator_service import locate_file
+from app.services.filesize_service import get_file_size
+from app.services.lru_manager import LRUManager
 from app.services.replication_service import trigger_replication
 from app.models.replication_model import get_replication_model
 
 replication_ns = Namespace(
     "workflow-data-replication", description="Endpoints for workflow replication")
 replication_model = get_replication_model(replication_ns)
+lru_manager = LRUManager()
 
 @replication_ns.route("/trigger")
 class StartReplication(Resource):
@@ -34,6 +37,18 @@ class StartReplication(Resource):
         if not locate_file_result["startReplication"]:
             return {"message": locate_file_result["message"]}, 200
         
+        file_size = get_file_size(data["bucket"], data["filename"])
+        if file_size is None:
+            return {"message": "File not found in Spain MinIO"}, 400
+        else:
+            print(f"File size: {file_size} bytes")
+        
+        removed_file = lru_manager.remove_oldest_file(file_size)
+        if removed_file:
+            print(f"Removed LRU file: {removed_file} to make space.")
+        else:
+            print("No LRU file removed.")
+            
         if locate_file_result["startReplication"]:
             target_path = os.path.dirname(target_path)
             result = trigger_replication(source_path, target_path)
@@ -47,3 +62,4 @@ class StartReplication(Resource):
         Build the Rclone path for the MinIO server
         """            
         return f"{minio_url}:{bucket}/{filename}"
+
