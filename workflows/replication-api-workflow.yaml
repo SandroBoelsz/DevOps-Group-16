@@ -30,7 +30,7 @@ spec:
         command: [sh, -c]
         args:
           - |
-            response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "https://3bc6-86-89-195-16.ngrok-free.app/workflow-data-replication/trigger" \
+            response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "http://ad5fb757aca5a41679bc966368ab04bb-1970806921.eu-central-1.elb.amazonaws.com:5000/workflow-data-replication/trigger" \
               -H "Content-Type: application/json" \
               -d '{
                     "minioUrl": "{{inputs.parameters.minioUrl}}",

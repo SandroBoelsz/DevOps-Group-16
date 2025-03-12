@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - origin/feature/argo-docs-and-env-variables
 env:
   AWS_REGION: eu-central-1
   ECR_REPOSITORY: lifewatch

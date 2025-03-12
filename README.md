@@ -71,11 +71,12 @@ The pipeline is triggered on a `push` event to the `main` or `ci-cd-pipeline` br
 - In this case the loadbalancer is named `afd188729fa134b52937207f9fda48b5` and security group is `lifewatch-sg`.
 
 ## Argo Workflows
-Argo workflows is a container-native workflow engine for orchestrating parallel jobs on Kubernetes. In this project, it is automatically setup during the CI/CD pipeline on AWS, and can be accessed via the pod's LoadBalancer IP address. It is not available for local development.
+Argo workflows is a container-native workflow engine for orchestrating parallel jobs on Kubernetes. In this project, it is automatically setup during the CI/CD pipeline on AWS, and can be accessed via the pod's LoadBalancer IP address called argo-server-external. Remember to http:// in front of the url. Note: Argo is not available for local development.
 
 This loadbalancer IP address can be found by running the following command in the AWS kubernetes cluster:
 ```bash
 kubectl get svc -n argo
 ```
+
 A demo workflow is setup to simulate the data replication process between two Minio servers. and can be found in the `workflow-data-replication-api/argo-workflow.yaml` file.
 This workflow simulates the entire process by requesting a file from the UvA Minio server and download its content as output. If the file is not found, it will call this API and request the file from the Spain Minio server and replicate it to the UvA Minio server.
