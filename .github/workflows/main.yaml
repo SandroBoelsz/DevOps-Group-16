@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-      - ci-cd-pipeline
-      - feature/US-21/workflow-trigger
-
 env:
   AWS_REGION: eu-central-1
   ECR_REPOSITORY: lifewatch
@@ -46,7 +43,18 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ steps.commit.outputs.short }}
+        UVA_MINIO_API: ${{ vars.UVA_MINIO_API }}
+        SPAIN_MINIO_API: ${{ vars.SPAIN_MINIO_API }}
+        MINIO_REGION: ${{ vars.MINIO_REGION }}
+        MINIO_ACCESS_KEY_ID: ${{ secrets.MINIO_ACCESS_KEY_ID }}
+        MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
       run: |
+        sed -i "s|\${UVA_MINIO_API}|$UVA_MINIO_API|g" manifests/lifewatch-deployment.yaml
+        sed -i "s|\${SPAIN_MINIO_API}|$SPAIN_MINIO_API|g" manifests/lifewatch-deployment.yaml
+        sed -i "s|\${MINIO_REGION}|$MINIO_REGION|g" manifests/lifewatch-deployment.yaml
+        sed -i "s|\${MINIO_ACCESS_KEY_ID}|$MINIO_ACCESS_KEY_ID|g" manifests/lifewatch-deployment.yaml
+        sed -i "s|\${MINIO_ACCESS_KEY}|$MINIO_ACCESS_KEY|g" manifests/lifewatch-deployment.yaml
+
         kubectl apply -f manifests/lifewatch-deployment.yaml
         kubectl apply -f manifests/lifewatch-service.yaml
 

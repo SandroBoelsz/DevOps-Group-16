@@ -20,6 +20,17 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
+        env:
+        - name: UVA_MINIO_API
+          value: ${UVA_MINIO_API}
+        - name: SPAIN_MINIO_API
+          value: ${SPAIN_MINIO_API}
+        - name: MINIO_REGION
+          value: ${MINIO_REGION}
+        - name: MINIO_ACCESS_KEY_ID
+          value: ${MINIO_ACCESS_KEY_ID}
+        - name: MINIO_ACCESS_KEY
+          value: ${MINIO_ACCESS_KEY}
   strategy:
     type: RollingUpdate
     rollingUpdate:
