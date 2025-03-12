@@ -22,6 +22,11 @@ class TestAPI(unittest.TestCase):
         "bucket": "naa-vre-user-data",
         "filename": "s.boelsz@gmail.com/testen1.txt",
     }
+    REQUEST_PAYLOAD_WRONG_MINI_IO = {
+        "minioUrl": "https://scruffy.lab.nonsense.com:9203",
+        "bucket": "naa-vre-user-data",
+        "filename": "s.boelsz@gmail.com/testen1.txt",
+    }
 
     def test_trigger_method_not_allowed(self):
         url = f"{self.BASE_URL}/workflow-data-replication/trigger"
@@ -47,6 +52,16 @@ class TestAPI(unittest.TestCase):
         response = requests.post(url, json=self.REQUEST_PAYLOAD_FILE_NOT_EXISTING)
         expected_status = 500  # Should give an error
         expected_message = {"message": "File is not present in both Spanish and Dutch S3 buckets"}  
+
+        # Check if the response status is as expected (adjust if needed)
+        self.assertEqual(response.status_code, expected_status)  
+        self.assertEqual(response.json(), expected_message)
+    
+    def test_trigger_post_request_wrong_minIO(self):
+        url = f"{self.BASE_URL}{self.ENDPOINT}"
+        response = requests.post(url, json=self.REQUEST_PAYLOAD_WRONG_MINI_IO)
+        expected_status = 400  
+        expected_message = {"message": "Only UvA MinIO URL is supported"}  
 
         # Check if the response status is as expected (adjust if needed)
         self.assertEqual(response.status_code, expected_status)  
