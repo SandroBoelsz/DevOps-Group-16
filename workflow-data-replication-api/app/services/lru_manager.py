@@ -46,7 +46,7 @@ class LRUManager:
         filename, file_size = self.get_oldest_file(min_size)
         # if filename:
         #     try:
-        #         self.minio_client.delete_object(Bucket="uva-minio-bucket", Key=filename)
+        #         self.minio_client.delete_object(Bucket="devopsgoup16", Key=filename)
         #         print(f"Deleted LRU file: {filename} ({file_size} bytes)")
         #         return filename
         #     except Exception as e:
