@@ -32,11 +32,6 @@ cd workflow-data-replication-api
 python3 run.py
 ```
 
-### Run Python API before testing!
-```bash
-python3 run.py
-```
-
 ### Run tests
 ```bash
 pytest test_api.py -v
