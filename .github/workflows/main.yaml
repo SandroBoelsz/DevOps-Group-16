@@ -73,6 +73,7 @@ jobs:
         sed -i "s|\${MINIO_ACCESS_KEY_ID}|$MINIO_ACCESS_KEY_ID|g" manifests/lifewatch-deployment.yaml
         sed -i "s|\${MINIO_ACCESS_KEY}|$MINIO_ACCESS_KEY|g" manifests/lifewatch-deployment.yaml
 
+        kubectl delete svc lifewatch-service || true
         kubectl apply -f manifests/lifewatch-deployment.yaml
         kubectl apply -f manifests/lifewatch-service.yaml
 
