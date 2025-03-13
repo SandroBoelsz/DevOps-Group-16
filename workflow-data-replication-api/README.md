@@ -32,6 +32,25 @@ cd workflow-data-replication-api
 python3 run.py
 ```
 
+### Install Pytest
+```bash
+pip install requests pytest
+```
+
+### Run Python API before testing!
+```bash
+python3 run.py
+```
+
+### Run tests
+```bash
+pytest test_api.py -v
+
+OR
+
+python -m unittest test_api.py
+```
+
 # Kubernetes, docker and helm
 First make sure minikube, docker and helm are installed on you system
 
