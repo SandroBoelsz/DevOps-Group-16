@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - ci-cd-pip
+      - ci-cd-pipeline
 env:
   AWS_REGION: eu-central-1
   ECR_REPOSITORY: lifewatch
