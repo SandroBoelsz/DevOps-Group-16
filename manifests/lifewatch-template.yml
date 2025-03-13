@@ -37,8 +37,17 @@ Parameters:
     Type: Number
     Default: 3
     Description: Maximum number of worker nodes
+  AlarmThreshold:
+    Type: Number
+    Default: 1
+    Description: Minimum number of healthy nodes before triggering alarm
+  AlarmSNSTopic:
+    Type: String
+    Default: ''
+    Description: SNS Topic ARN to notify when alarm triggers (optional)
 
 Resources:
+
   #============================================================================#
   # VPC
   #============================================================================#
@@ -180,6 +189,34 @@ Resources:
         - !Ref Subnet1
         - !Ref Subnet2
 
+  NodeGroupHealthyNodesAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub ${NodeGroupName}-HealthyNodes-Alarm
+      AlarmDescription: !Sub Alarm when healthy nodes in ${NodeGroupName} fall below threshold
+      Namespace: AWS/EKS
+      MetricName: HealthyNodes
+      Dimensions:
+        - Name: ClusterName
+          Value: !Ref ClusterName
+        - Name: NodegroupName
+          Value: !Ref NodeGroupName
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: !Ref AlarmThreshold
+      ComparisonOperator: LessThanThreshold
+      AlarmActions: 
+        - !If
+          - HasSNSTopic
+          - !Ref AlarmSNSTopic
+          - !Ref AWS::NoValue
+      TreatMissingData: missing
+
+Conditions:
+  HasSNSTopic:
+    !Not [!Equals [!Ref AlarmSNSTopic, '']]
+
 Outputs:
   VpcId:
     Description: The ID of the VPC
@@ -199,3 +236,6 @@ Outputs:
   NodeGroupName:
     Description: The name of the node group
     Value: !Ref EKSNodeGroup
+  AlarmName: 
+    Description: The name of the CloudWatch alarm
+    Value: !Ref NodeGroupHealthyNodesAlarm
