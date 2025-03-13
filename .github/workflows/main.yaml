@@ -33,7 +33,7 @@ jobs:
 
     - name: Run tests
       run: |
-        cd workflow-data-replication-api
+        cd workflow-data-replication-api/app/test/
         pytest test_api.py -v
 
     - name: Configure AWS credentials
