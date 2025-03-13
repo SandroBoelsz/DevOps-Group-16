@@ -1,8 +1,5 @@
 # DevOps-Group-16
 
-
-
-
 # CI/CD Pipeline for LifeWatch Application
 This section outlines the Continuous Integration and Continuous Deployment (CI/CD) process for building, pushing, and deploying the LifeWatch application to Amazon Elastic Container Registry (ECR) and Elastic Kubernetes Service (EKS) using GitHub Actions.
 
