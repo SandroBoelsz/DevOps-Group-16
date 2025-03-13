@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - ci-cd-pipeline
 env:
   AWS_REGION: eu-central-1
   ECR_REPOSITORY: lifewatch
@@ -27,13 +28,12 @@ jobs:
     - name: Install dependencies
       run: |
         cd workflow-data-replication-api
-        pip install pytest
-        # Add any other dependencies needed for testing
-        # pip install -r requirements.txt  # Uncomment if you have a requirements.txt
+        pip install --upgrade pip
+        pip install -r requirements.txt  
 
     - name: Run tests
       run: |
-        cd workflow-data-replication-api/app/test/
+        cd workflow-data-replication-api/app/test
         pytest test_api.py -v
 
     - name: Configure AWS credentials
