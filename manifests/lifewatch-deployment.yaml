@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: lifewatch-app
-        image: 940482412682.dkr.ecr.eu-central-1.amazonaws.com/lifewatch:latest
+        image: 940482412682.dkr.ecr.eu-central-1.amazonaws.com/lifewatch:IMAGE_TAG_PLACEHOLDER
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
