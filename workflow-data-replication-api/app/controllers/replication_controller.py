@@ -37,7 +37,7 @@ class StartReplication(Resource):
         if not locate_file_result["startReplication"]:
             return {"message": locate_file_result["message"]}, 200
         
-        file_size = get_file_size(data["bucket"], data["filename"])
+        file_size = get_file_size("devopsgoup16", data["filename"])
         if file_size is None:
             return {"message": "File not found in Spain MinIO"}, 400
         else:
